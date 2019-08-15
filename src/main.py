@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import string
 
 infile = "sample_file.xlsx"
 outfile = "output.csv"
@@ -13,4 +14,10 @@ with pd.ExcelFile(filepath_in) as xlsx:
     sample = pd.read_excel(xlsx)
 
     for i in sample.index:
-        agencies.append(sample["Agency"][i])
+        agency = sample["Agency"][i]
+        agency = agency.translate(str.maketrans('', '', string.punctuation))
+        agency = agency.replace(" ", "%20")
+        agencies.append(agency)
+
+for agency in agencies:
+    print (agency)
