@@ -1,4 +1,3 @@
-
 import csv
 import pandas as pd
 import string
@@ -32,7 +31,7 @@ def format_agnecy_for_query(agency):
 
 def build_row_and_write_to_outfile(agencies_formatted, agencies_orig, passcodes, filepath_out):
     for index, agency in enumerate(agencies_formatted):
-        print(index)
+        print("Processing index: " + str(index))
         row = []
         row.append(passcodes[index])
         row.append(agencies_orig[index])
