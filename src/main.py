@@ -30,7 +30,18 @@ KEY = 'YOUR_KEY'
 QUERY1 = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input='
 QUERY2 = '&fields=formatted_address,name&inputtype=textquery&key='
 
-for agency in agencies:
-    response = requests.get(QUERY1 + agency +QUERY2+KEY)
-    result = json.loads(response.content)
+for index, agency in enumerate(agencies):
+    row = []
+    row.append(passcodes[index])
+    row.append(orig[index])
+    try:
+        response = requests.get(QUERY1 + agency + QUERY2 + KEY)
+        result = json.loads(response.content)
+        with open(filepath_out, 'a') as outfile:
+            writer = csv.writer(outfile)
+            for i in range(len(result['candidates'])):
+                row.append(result['candidates'][i]['formatted_address'])
+            writer.writerow(row)
+    except Exception as e:
+        print(e)
 
