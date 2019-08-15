@@ -1,11 +1,7 @@
 import os
-import csv
-import requests
-import json
-from src.functions import create_output_file, fill_lists
+from src.functions import create_output_file, fill_lists, build_row_and_write_to_outfile
 
-# infile = "sample_file.xlsx"
-infile = "test_sample_file.xlsx"
+infile = "sample_file.xlsx"
 outfile = "output.csv"
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
@@ -19,32 +15,6 @@ agencies_formatted = []
 passcodes = []
 
 agencies_orig, passcodes, agencies_formatted = fill_lists(filepath_in, agencies_orig, passcodes, agencies_formatted)
+build_row_and_write_to_outfile(agencies_formatted, agencies_orig, passcodes, filepath_out)
 
-print(agencies_orig)
-print(passcodes)
-print(agencies_formatted)
-
-# KEY = 'YOUR_KEY'
-# QUERY1 = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input='
-# QUERY2 = '&fields=formatted_address,name&inputtype=textquery&key='
-#
-# for index, agency in enumerate(agencies):
-#     print(index)
-#     row = []
-#     row.append(passcodes[index])
-#     row.append(orig[index])
-#     try:
-#         response = requests.get(QUERY1 + agency + QUERY2 + KEY)
-#         result = json.loads(response.content)
-#         with open(filepath_out, 'a') as outfile:
-#             writer = csv.writer(outfile)
-#             if not len(result['candidates']) == 0:
-#                 for i in range(len(result['candidates'])):
-#                     row.append(result['candidates'][i]['formatted_address'])
-#             else:
-#                 row.append("NO RESULTS FOUND")
-#             writer.writerow(row)
-#     except Exception as e:
-#         print(e)
-#
-# print("finished")
+print("finished")
