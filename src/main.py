@@ -5,7 +5,8 @@ import pandas as pd
 
 
 infile = "sample_file.xlsx"
-outfile = "output.csv"
+# outfile = "output.csv"
+outfile = "output.xlsx"
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
 filepath_in = os.path.join(base_dir, "input/", infile)
@@ -39,21 +40,36 @@ for index, agency in enumerate(agencies_formatted):
 
     rows.append(row)
 
-print(rows)
+# print(rows)
+#
+
 
 for i in range(1, max_results+1):
     headers.append("Address_{}".format(i))
+print(headers)
+
+for row in rows:
+    while len(row) < len(headers):
+        row.append("")
 
 df = pd.DataFrame(columns=headers)
 for i in range(0, len(rows)):
+    print(len(rows[i]))
+    print(rows[i])
+
     df.loc[i] = rows[i]
 
+# print(df)
+# df = pd.DataFrame(columns=["Passcode", "Agency", "Address_1", "Address_2"])
+# for i in range(0, len(passcodes)):
+#     df = df.append({"Passcode":passcodes[i], "Agency":agencies_orig[i]}, ignore_index=True)
 
 print(df)
-writer = pd.ExcelWriter('test_output.xlsx', engine='xlsxwriter')
+writer = pd.ExcelWriter(filepath_out, engine='xlsxwriter')
 df.to_excel(writer, sheet_name="Sheet1", index=False)
 writer.save()
 
 
 # build_row_and_write_to_outfile(agencies_formatted, agencies_orig, passcodes, filepath_out)
+#
 # print("finished")
