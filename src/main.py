@@ -1,5 +1,5 @@
 import os
-from src.functions import create_output_file, fill_lists, build_list_of_rows, create_header_row, adjust_row_length, build_data_frame, write_data_frame_to_file
+from src.functions import fill_lists, build_list_of_rows, create_header_row, adjust_row_length, build_data_frame, write_data_frame_to_file
 
 infile = "sample_file.xlsx"
 outfile = "output.xlsx"
@@ -7,8 +7,6 @@ outfile = "output.xlsx"
 base_dir = os.path.dirname(os.path.dirname(__file__))
 filepath_in = os.path.join(base_dir, "input/", infile)
 filepath_out = os.path.join(base_dir, "output/", outfile)
-
-create_output_file(filepath_out)
 
 agencies_orig = []
 agencies_formatted = []
@@ -28,4 +26,3 @@ rows = adjust_row_length(rows, headers)
 df = build_data_frame(headers, rows)
 
 write_data_frame_to_file(df, filepath_out)
-
