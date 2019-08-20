@@ -64,3 +64,48 @@ def write_row_to_outfile(row, filepath_out):
     with open(filepath_out, 'a') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(row)
+
+
+def build_list_of_rows(agencies_formatted, agencies_orig, passcodes, rows, max_results):
+    for index, agency in enumerate(agencies_formatted):
+        print("Processing index: " + str(index))
+        row = []
+        row.append(passcodes[index])
+        row.append(agencies_orig[index])
+
+        result = api_call(agency)
+        if len(result['candidates']) > max_results:
+            max_results = len(result['candidates'])
+
+        if not len(result['candidates']) == 0:
+            for i in range(len(result['candidates'])):
+                row.append(result['candidates'][i]['formatted_address'])
+        else:
+            row.append("NO RESULTS FOUND")
+
+        rows.append(row)
+    return (rows, max_results)
+
+
+def create_header_row(headers, max_results):
+    for i in range(1, max_results + 1):
+        headers.append("Address_{}".format(i))
+    return headers
+
+
+def adjust_row_length(rows, headers):
+    for row in rows:
+        while len(row) < len(headers):
+            row.append("")
+    return rows
+
+def build_data_frame(headers, rows):
+    df = pd.DataFrame(columns=headers)
+    for i in range(0, len(rows)):
+        df.loc[i] = rows[i]
+    return df
+
+def write_data_frame_to_file(df, filepath_out):
+    writer = pd.ExcelWriter(filepath_out, engine='xlsxwriter')
+    df.to_excel(writer, sheet_name="Sheet1", index=False)
+    writer.save()
