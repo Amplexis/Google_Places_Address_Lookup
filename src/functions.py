@@ -1,15 +1,7 @@
-import csv
 import pandas as pd
 import string
 import requests
 import json
-
-
-def create_output_file(filepath_out):
-    HEADERS = ["Passcode", "Agency", "Address_1", "Address_2", "Address_3", "Address_4", "Address_5\n"]
-    with open(filepath_out, 'w') as outfile:
-        writer = csv.writer(outfile)
-        writer.writerow(HEADERS)
 
 
 def fill_lists(filepath_in, agencies_orig, passcodes, agencies_formatted):
@@ -32,22 +24,6 @@ def format_agnecy_for_query(agency):
     return agency
 
 
-def build_row_and_write_to_outfile(agencies_formatted, agencies_orig, passcodes, filepath_out):
-    for index, agency in enumerate(agencies_formatted):
-        print("Processing index: " + str(index))
-        row = []
-        row.append(passcodes[index])
-        row.append(agencies_orig[index])
-
-        result = api_call(agency)
-        if not len(result['candidates']) == 0:
-            for i in range(len(result['candidates'])):
-                row.append(result['candidates'][i]['formatted_address'])
-        else:
-            row.append("NO RESULTS FOUND")
-        write_row_to_outfile(row, filepath_out)
-
-
 def api_call(agency):
     KEY = 'YOUR_KEY'
     QUERY1 = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input='
@@ -58,12 +34,6 @@ def api_call(agency):
         return result
     except Exception as e:
         print(e)
-
-
-def write_row_to_outfile(row, filepath_out):
-    with open(filepath_out, 'a') as outfile:
-        writer = csv.writer(outfile)
-        writer.writerow(row)
 
 
 def build_list_of_rows(agencies_formatted, agencies_orig, passcodes, rows, max_results):
