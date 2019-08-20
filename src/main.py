@@ -1,11 +1,7 @@
 import os
-from src.functions import create_output_file, fill_lists, build_row_and_write_to_outfile, build_row_and_write_to_xlsx
-from src.functions import api_call
-import pandas as pd
-
+from src.functions import create_output_file, fill_lists, build_list_of_rows, create_header_row, adjust_row_length, build_data_frame, write_data_frame_to_file
 
 infile = "sample_file.xlsx"
-# outfile = "output.csv"
 outfile = "output.xlsx"
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
@@ -23,53 +19,13 @@ max_results = 0
 rows = []
 headers = ["Passcode", "Agency"]
 
-for index, agency in enumerate(agencies_formatted):
-    row = []
-    row.append(passcodes[index])
-    row.append(agencies_orig[index])
+rows, max_results = build_list_of_rows(agencies_formatted, agencies_orig, passcodes, rows, max_results)
 
-    result = api_call(agency)
-    if len(result['candidates']) > max_results:
-        max_results = len(result['candidates'])
+headers = create_header_row(headers, max_results)
 
-    if not len(result['candidates']) == 0:
-        for i in range(len(result['candidates'])):
-            row.append(result['candidates'][i]['formatted_address'])
-    else:
-        row.append("NO RESULTS FOUND")
+rows = adjust_row_length(rows, headers)
 
-    rows.append(row)
+df = build_data_frame(headers, rows)
 
-# print(rows)
-#
+write_data_frame_to_file(df, filepath_out)
 
-
-for i in range(1, max_results+1):
-    headers.append("Address_{}".format(i))
-print(headers)
-
-for row in rows:
-    while len(row) < len(headers):
-        row.append("")
-
-df = pd.DataFrame(columns=headers)
-for i in range(0, len(rows)):
-    print(len(rows[i]))
-    print(rows[i])
-
-    df.loc[i] = rows[i]
-
-# print(df)
-# df = pd.DataFrame(columns=["Passcode", "Agency", "Address_1", "Address_2"])
-# for i in range(0, len(passcodes)):
-#     df = df.append({"Passcode":passcodes[i], "Agency":agencies_orig[i]}, ignore_index=True)
-
-print(df)
-writer = pd.ExcelWriter(filepath_out, engine='xlsxwriter')
-df.to_excel(writer, sheet_name="Sheet1", index=False)
-writer.save()
-
-
-# build_row_and_write_to_outfile(agencies_formatted, agencies_orig, passcodes, filepath_out)
-#
-# print("finished")
